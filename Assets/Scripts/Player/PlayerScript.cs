@@ -424,14 +424,13 @@ public class PlayerScript : AnimatorManager
     // determines player jump height when bouncing from jump pad
     public void BounceJump()
     {
-        FindObjectOfType<AudioManager>().Play("MushroomBounce");
-
         // disable jump while using the bouncepad. 
         // NOTE: If multiple jumps allowed, will need to check if more jumping is allowed
         //isJumping = false;
 
         // don't let player bounce when jumping from below
         if (rb.velocity.y <= 0){
+            FindObjectOfType<AudioManager>().Play("MushroomBounce");
             bouncing = true;
 
             rb.gravityScale = ascGravity;
