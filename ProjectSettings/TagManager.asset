@@ -8,6 +8,7 @@ TagManager:
   - HUD
   - Game Over
   - Ghost
+  - Pickup
   layers:
   - Default
   - TransparentFX

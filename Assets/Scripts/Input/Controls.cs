@@ -337,6 +337,114 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Hotbar"",
+            ""id"": ""8ecfd7b3-14d3-4582-a675-6aec42715d70"",
+            ""actions"": [
+                {
+                    ""name"": ""Scroll Right"",
+                    ""type"": ""Button"",
+                    ""id"": ""0a64eb1c-ec62-4562-b362-60ef566da11f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Scroll Left"",
+                    ""type"": ""Button"",
+                    ""id"": ""9354dd11-ebe3-4ac7-b0aa-fd0276f1383e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pickup"",
+                    ""type"": ""Button"",
+                    ""id"": ""48d98e41-ae48-4b5d-b3a6-bc0b8664e17d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Drop"",
+                    ""type"": ""Button"",
+                    ""id"": ""1c5faf88-903f-4dc9-b5c7-474c92b6c4c4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Throw"",
+                    ""type"": ""Button"",
+                    ""id"": ""567d7ca7-e9c6-4a47-8d04-d33b3c9bc041"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""d95b7238-0846-4254-974a-fb5725e98f02"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Scroll Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ae60b8f2-c60f-4f7e-8e6b-bebe77c1a0d8"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Scroll Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""80bc6fb1-e0d0-479d-9c4e-bbe36c5b82e3"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pickup"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e905bf74-c847-4d46-a7d4-3a321213d2e1"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Drop"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fd1a22a3-c4f5-4f04-8791-a845c4b94243"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Throw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -361,6 +469,13 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         // Drop
         m_Drop = asset.FindActionMap("Drop", throwIfNotFound: true);
         m_Drop_Drop = m_Drop.FindAction("Drop", throwIfNotFound: true);
+        // Hotbar
+        m_Hotbar = asset.FindActionMap("Hotbar", throwIfNotFound: true);
+        m_Hotbar_ScrollRight = m_Hotbar.FindAction("Scroll Right", throwIfNotFound: true);
+        m_Hotbar_ScrollLeft = m_Hotbar.FindAction("Scroll Left", throwIfNotFound: true);
+        m_Hotbar_Pickup = m_Hotbar.FindAction("Pickup", throwIfNotFound: true);
+        m_Hotbar_Drop = m_Hotbar.FindAction("Drop", throwIfNotFound: true);
+        m_Hotbar_Throw = m_Hotbar.FindAction("Throw", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -556,6 +671,84 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         }
     }
     public DropActions @Drop => new DropActions(this);
+
+    // Hotbar
+    private readonly InputActionMap m_Hotbar;
+    private List<IHotbarActions> m_HotbarActionsCallbackInterfaces = new List<IHotbarActions>();
+    private readonly InputAction m_Hotbar_ScrollRight;
+    private readonly InputAction m_Hotbar_ScrollLeft;
+    private readonly InputAction m_Hotbar_Pickup;
+    private readonly InputAction m_Hotbar_Drop;
+    private readonly InputAction m_Hotbar_Throw;
+    public struct HotbarActions
+    {
+        private @Controls m_Wrapper;
+        public HotbarActions(@Controls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @ScrollRight => m_Wrapper.m_Hotbar_ScrollRight;
+        public InputAction @ScrollLeft => m_Wrapper.m_Hotbar_ScrollLeft;
+        public InputAction @Pickup => m_Wrapper.m_Hotbar_Pickup;
+        public InputAction @Drop => m_Wrapper.m_Hotbar_Drop;
+        public InputAction @Throw => m_Wrapper.m_Hotbar_Throw;
+        public InputActionMap Get() { return m_Wrapper.m_Hotbar; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(HotbarActions set) { return set.Get(); }
+        public void AddCallbacks(IHotbarActions instance)
+        {
+            if (instance == null || m_Wrapper.m_HotbarActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_HotbarActionsCallbackInterfaces.Add(instance);
+            @ScrollRight.started += instance.OnScrollRight;
+            @ScrollRight.performed += instance.OnScrollRight;
+            @ScrollRight.canceled += instance.OnScrollRight;
+            @ScrollLeft.started += instance.OnScrollLeft;
+            @ScrollLeft.performed += instance.OnScrollLeft;
+            @ScrollLeft.canceled += instance.OnScrollLeft;
+            @Pickup.started += instance.OnPickup;
+            @Pickup.performed += instance.OnPickup;
+            @Pickup.canceled += instance.OnPickup;
+            @Drop.started += instance.OnDrop;
+            @Drop.performed += instance.OnDrop;
+            @Drop.canceled += instance.OnDrop;
+            @Throw.started += instance.OnThrow;
+            @Throw.performed += instance.OnThrow;
+            @Throw.canceled += instance.OnThrow;
+        }
+
+        private void UnregisterCallbacks(IHotbarActions instance)
+        {
+            @ScrollRight.started -= instance.OnScrollRight;
+            @ScrollRight.performed -= instance.OnScrollRight;
+            @ScrollRight.canceled -= instance.OnScrollRight;
+            @ScrollLeft.started -= instance.OnScrollLeft;
+            @ScrollLeft.performed -= instance.OnScrollLeft;
+            @ScrollLeft.canceled -= instance.OnScrollLeft;
+            @Pickup.started -= instance.OnPickup;
+            @Pickup.performed -= instance.OnPickup;
+            @Pickup.canceled -= instance.OnPickup;
+            @Drop.started -= instance.OnDrop;
+            @Drop.performed -= instance.OnDrop;
+            @Drop.canceled -= instance.OnDrop;
+            @Throw.started -= instance.OnThrow;
+            @Throw.performed -= instance.OnThrow;
+            @Throw.canceled -= instance.OnThrow;
+        }
+
+        public void RemoveCallbacks(IHotbarActions instance)
+        {
+            if (m_Wrapper.m_HotbarActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IHotbarActions instance)
+        {
+            foreach (var item in m_Wrapper.m_HotbarActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_HotbarActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public HotbarActions @Hotbar => new HotbarActions(this);
     private int m_KeyboardSchemeIndex = -1;
     public InputControlScheme KeyboardScheme
     {
@@ -585,5 +778,13 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     public interface IDropActions
     {
         void OnDrop(InputAction.CallbackContext context);
+    }
+    public interface IHotbarActions
+    {
+        void OnScrollRight(InputAction.CallbackContext context);
+        void OnScrollLeft(InputAction.CallbackContext context);
+        void OnPickup(InputAction.CallbackContext context);
+        void OnDrop(InputAction.CallbackContext context);
+        void OnThrow(InputAction.CallbackContext context);
     }
 }
