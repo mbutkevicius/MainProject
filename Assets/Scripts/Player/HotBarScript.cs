@@ -30,7 +30,7 @@ public class HotBarScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (UserInput.instance.controls.Hotbar.Pickup.WasPressedThisFrame()){
+        if (UserInput.instance.controls.Hotbar.Pickup.WasPressedThisFrame()  && inItemRange){
             pickupButtonPressed = true;
         }
         else if (UserInput.instance.controls.Hotbar.ScrollRight.WasPressedThisFrame()){
@@ -45,7 +45,9 @@ public class HotBarScript : MonoBehaviour
     }
 
     private void OnTriggerStay2D(Collider2D other){
-        //inItemRange = true;
+        if (other.CompareTag("Pickup")){
+            inItemRange = true;
+        }
 
         if (pickupButtonPressed && other.CompareTag("Pickup")){ //&& hotbarSlots[currentSlot] == null){
             pickupButtonPressed = false;
@@ -69,6 +71,12 @@ public class HotBarScript : MonoBehaviour
             }
         }
         //Debug.Log(hotbarSlots[currentSlot]);
+    }
+
+    private void OnTriggerExit2D(Collider2D other){
+        if (other.CompareTag("Pickup")){
+            inItemRange = false;
+        }    
     }
 
     public void RefreshUI(){
