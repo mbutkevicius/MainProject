@@ -90,7 +90,9 @@ public class HotBarScript : MonoBehaviour
             else {
                 slotsUI[i].transform.GetChild(0).GetComponent<Image>().sprite = null;
             }
+            slotsUI[i].transform.GetComponent<Image>().color = Color.blue;
         }
+        slotsUI[currentSlot].transform.GetComponent<Image>().color = Color.green;
     }
 
     public int NextHotbarSlotIndex(){
@@ -135,6 +137,7 @@ public class HotBarScript : MonoBehaviour
             currentSlot++;
         }
         Debug.Log("currentSlot: " + currentSlot);
+        RefreshUI();
     }
 
     private void ScrollLeft(){
@@ -145,5 +148,6 @@ public class HotBarScript : MonoBehaviour
             currentSlot--;
         }
         Debug.Log("currentSlot: " + currentSlot);
+        RefreshUI();
     }
 }
