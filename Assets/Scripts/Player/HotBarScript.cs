@@ -6,11 +6,13 @@ using UnityEngine.UI;
 
 public class HotBarScript : MonoBehaviour
 {
+    public Transform playerHand;
     public GameObject slotHolderUI;
     public GameObject[] slotsUI;
     public int hotbarSize = 5;
     public int currentSlot = 0;
     public Item[] hotbarSlots;
+    public float pickupRadius = 1f;
 
     public bool inItemRange = false;
     public bool pickupButtonPressed = false;
@@ -30,8 +32,8 @@ public class HotBarScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (UserInput.instance.controls.Hotbar.Pickup.WasPressedThisFrame()  && inItemRange){
-            pickupButtonPressed = true;
+        if (UserInput.instance.controls.Hotbar.Pickup.WasPressedThisFrame()){  //&& inItemRange){
+            CheckForPickup();
         }
         else if (UserInput.instance.controls.Hotbar.ScrollRight.WasPressedThisFrame()){
             ScrollRight();
@@ -42,8 +44,10 @@ public class HotBarScript : MonoBehaviour
         else if (UserInput.instance.controls.Hotbar.Drop.WasPressedThisFrame()){
             DropItem(currentSlot);
         }
+
     }
 
+/*
     private void OnTriggerStay2D(Collider2D other){
         if (other.CompareTag("Pickup")){
             inItemRange = true;
@@ -73,11 +77,65 @@ public class HotBarScript : MonoBehaviour
         //Debug.Log(hotbarSlots[currentSlot]);
     }
 
+
     private void OnTriggerExit2D(Collider2D other){
         if (other.CompareTag("Pickup")){
             inItemRange = false;
         }    
     }
+*/
+
+// old version
+/*
+    private void CheckForPickup()
+    {
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, pickupRadius);
+        foreach (var hitCollider in hitColliders)
+        {
+            if (hitCollider.CompareTag("Pickup"))
+            {
+                Item item = hitCollider.GetComponent<Item>();
+                int slot = NextHotbarSlotIndex();
+                AddToHotbar(item, slot);
+                break;
+            }
+        }
+    }
+*/
+
+    private void CheckForPickup()
+    {
+        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, pickupRadius);
+
+
+        // LINQ to get closest collider to player
+        var closestCollider = hitColliders
+            .Where(hitCollider => hitCollider.CompareTag("Pickup"))
+            .Select(hitCollider => new { Collider = hitCollider, Item = hitCollider.GetComponent<Item>() })
+            .OrderBy(hit => Vector2.Distance(transform.position, hit.Collider.transform.position))
+            .Select(hit => hit.Collider)
+            .FirstOrDefault();
+
+        Debug.Log("closestcolliders: " + closestCollider);
+
+        if (closestCollider != null)
+        {
+            Item item = closestCollider.GetComponent<Item>();
+            if (item != null) {
+                int slot = NextHotbarSlotIndex();
+                AddToHotbar(item, slot);
+                //PickUpItem(item.GetComponent<GameObject>());        
+            }
+        }
+    }
+
+    public void PickUpItem(GameObject item)
+    {
+        item.transform.SetParent(playerHand);
+        item.transform.localPosition = Vector3.zero; // Adjust as needed
+        item.SetActive(false); // Deactivate the item
+    }
+
 
     public void RefreshUI(){
         //Debug.Log(hotbarSlots[0].GetComponent<SpriteRenderer>().sprite);
@@ -97,6 +155,10 @@ public class HotBarScript : MonoBehaviour
 
     public int NextHotbarSlotIndex(){
         for (int i = 0; i < hotbarSlots.Length; i++){
+            if (hotbarSlots[currentSlot] == null){
+                return currentSlot;
+            }
+
             if (hotbarSlots[i] == null){
                 return i;
             }
@@ -112,6 +174,8 @@ public class HotBarScript : MonoBehaviour
             Debug.Log("Current slot :" + currentSlot);
             hotbarSlots[slotIndex] = item;
         }
+
+        item.transform.parent.gameObject.SetActive(false);
 
         RefreshUI();
     }
