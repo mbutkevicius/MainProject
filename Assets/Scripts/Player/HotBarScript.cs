@@ -46,11 +46,14 @@ public class HotBarScript : MonoBehaviour
             CheckForPickup();
         }
         else if (UserInput.instance.controls.Hotbar.Pickup.WasPressedThisFrame() && isHoldingItem){
-            int slot = NextHotbarSlotIndex();
-            AddToHotbar(itemInHand.GetComponent<Item>(), slot);
-            isHoldingItem = false;
-            itemInHand.SetActive(false);
-            itemInHand = null;
+            bool containsNull = hotbarSlots.Any(item => item == null);
+            if (containsNull){
+                int slot = NextHotbarSlotIndex();
+                AddToHotbar(itemInHand.GetComponent<Item>(), slot);
+                isHoldingItem = false;
+                itemInHand.SetActive(false);
+                itemInHand = null;
+            }
         }
         else if (UserInput.instance.controls.Hotbar.Throw.WasPressedThisFrame() && itemInHand != null){
             IThrowable throwableItem = itemInHand.GetComponent<IThrowable>();
@@ -80,10 +83,45 @@ public class HotBarScript : MonoBehaviour
                 isHoldingItem = false;
                 itemInHand = null;
             }
-            //DropItem(currentSlot);
+            //RemoveItemFromHotbar(currentSlot);
             //hotbarSlots[currentSlot] = null;
         }
 
+        else if (UserInput.instance.controls.Hotbar.Use.WasPressedThisFrame() && !isHoldingItem){
+            // Get the child GameObject by index
+            if (hotbarSlots[currentSlot] != null){
+                GameObject childObject = transform.GetChild(currentSlot).gameObject;
+                // Activate the child GameObject    
+                childObject.SetActive(true);
+                itemInHand = childObject;
+                isHoldingItem = true;
+                RemoveItemFromHotbar(currentSlot);
+            }
+        }
+
+        // TODO: Swap indices so that it works more than once. So essentially, always make item in hand the 5th index
+        else if (UserInput.instance.controls.Hotbar.Use.WasPressedThisFrame() && isHoldingItem){
+            // LINQ check to see if null value exists
+            bool containsNull = hotbarSlots.Any(item => item == null);
+            if (!containsNull && isHoldingItem){
+                GameObject itemToSwap = transform.GetChild(currentSlot).gameObject;
+                // get the items index
+                //int index = itemInHand.transform.GetSiblingIndex();
+                //Debug.Log("Index: " + index);
+
+                // add item in hand to slot
+                RemoveItemFromHotbar(currentSlot);
+                itemInHand.SetActive(false);
+                AddToHotbar(itemInHand.GetComponent<Item>(), currentSlot);
+
+                itemInHand.transform.SetSiblingIndex(currentSlot);
+
+                itemInHand = itemToSwap;
+                itemInHand.transform.SetSiblingIndex(hotbarSize);
+                itemInHand.SetActive(true);
+                //itemInHand.transform.SetParent(null);   
+            }
+        }
     }
 
 /*
@@ -110,7 +148,7 @@ public class HotBarScript : MonoBehaviour
             else {
                 SwapHotbarItem(item, nextSlotIndex);
                 other.transform.parent.gameObject.SetActive(false);
-                //DropItem(nextSlotIndex);
+                //RemoveItemFromHotbar(nextSlotIndex);
             }
         }
         //Debug.Log(hotbarSlots[currentSlot]);
@@ -234,15 +272,13 @@ public class HotBarScript : MonoBehaviour
     }
 
     public void SwapHotbarItem(Item item, int slotIndex){
-        DropItem(slotIndex);
+        RemoveItemFromHotbar(slotIndex);
         AddToHotbar(item, slotIndex);
     }
 
-    private void DropItem(int slotIndex){
-        
-
+    private void RemoveItemFromHotbar(int slotIndex){
         if (hotbarSlots[slotIndex] != null){
-            hotbarSlots[slotIndex].transform.parent.gameObject.SetActive(true);
+            //hotbarSlots[slotIndex].transform.parent.gameObject.SetActive(true);
             hotbarSlots[slotIndex] = null;
         }
         RefreshUI();
