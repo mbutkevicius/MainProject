@@ -386,6 +386,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Use"",
+                    ""type"": ""Button"",
+                    ""id"": ""65de6bfa-9530-49ed-8056-a9d0da9245bf"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -443,6 +452,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""Throw"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5186bae9-5182-4af3-85ad-c2bb65bfaa82"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -476,6 +496,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Hotbar_Pickup = m_Hotbar.FindAction("Pickup", throwIfNotFound: true);
         m_Hotbar_Drop = m_Hotbar.FindAction("Drop", throwIfNotFound: true);
         m_Hotbar_Throw = m_Hotbar.FindAction("Throw", throwIfNotFound: true);
+        m_Hotbar_Use = m_Hotbar.FindAction("Use", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -680,6 +701,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Hotbar_Pickup;
     private readonly InputAction m_Hotbar_Drop;
     private readonly InputAction m_Hotbar_Throw;
+    private readonly InputAction m_Hotbar_Use;
     public struct HotbarActions
     {
         private @Controls m_Wrapper;
@@ -689,6 +711,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @Pickup => m_Wrapper.m_Hotbar_Pickup;
         public InputAction @Drop => m_Wrapper.m_Hotbar_Drop;
         public InputAction @Throw => m_Wrapper.m_Hotbar_Throw;
+        public InputAction @Use => m_Wrapper.m_Hotbar_Use;
         public InputActionMap Get() { return m_Wrapper.m_Hotbar; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -713,6 +736,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Throw.started += instance.OnThrow;
             @Throw.performed += instance.OnThrow;
             @Throw.canceled += instance.OnThrow;
+            @Use.started += instance.OnUse;
+            @Use.performed += instance.OnUse;
+            @Use.canceled += instance.OnUse;
         }
 
         private void UnregisterCallbacks(IHotbarActions instance)
@@ -732,6 +758,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Throw.started -= instance.OnThrow;
             @Throw.performed -= instance.OnThrow;
             @Throw.canceled -= instance.OnThrow;
+            @Use.started -= instance.OnUse;
+            @Use.performed -= instance.OnUse;
+            @Use.canceled -= instance.OnUse;
         }
 
         public void RemoveCallbacks(IHotbarActions instance)
@@ -786,5 +815,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnPickup(InputAction.CallbackContext context);
         void OnDrop(InputAction.CallbackContext context);
         void OnThrow(InputAction.CallbackContext context);
+        void OnUse(InputAction.CallbackContext context);
     }
 }
