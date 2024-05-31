@@ -4,17 +4,21 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    public ItemSO itemScriptableObject;
+    public ItemSO itemData;
 
-    // Start is called before the first frame update
     void Start()
     {
-        
+        if (itemData != null)
+        {
+            InitializeItem();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    void InitializeItem()
     {
         
+        // Set up the item using data from itemData
+        // For example, you can set the sprite or model based on itemData
+        //Debug.Log("Item initialized: " + itemData.itemName);
     }
 }

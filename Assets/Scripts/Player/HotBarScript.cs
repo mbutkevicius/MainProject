@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
+using Unity.VisualScripting.ReorderableList;
+using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,11 +14,18 @@ public class HotBarScript : MonoBehaviour
     public GameObject[] slotsUI;
     public int hotbarSize = 5;
     public int currentSlot = 0;
+    public GameObject[] physicalItems;
     public Item[] hotbarSlots;
     public float pickupRadius = 1f;
 
     public bool inItemRange = false;
     public bool pickupButtonPressed = false;
+
+    public GameObject itemPrefab;
+    private Dictionary<GameObject, Vector3> itemPositions = new Dictionary<GameObject, Vector3>();
+
+    private GameObject itemInHand;
+    private bool isHoldingItem = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -32,8 +42,28 @@ public class HotBarScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (UserInput.instance.controls.Hotbar.Pickup.WasPressedThisFrame()){  //&& inItemRange){
+        if (UserInput.instance.controls.Hotbar.Pickup.WasPressedThisFrame() && !isHoldingItem){  //&& inItemRange){
             CheckForPickup();
+        }
+        else if (UserInput.instance.controls.Hotbar.Pickup.WasPressedThisFrame() && isHoldingItem){
+            int slot = NextHotbarSlotIndex();
+            AddToHotbar(itemInHand.GetComponent<Item>(), slot);
+            isHoldingItem = false;
+            itemInHand.SetActive(false);
+            itemInHand = null;
+        }
+        else if (UserInput.instance.controls.Hotbar.Throw.WasPressedThisFrame() && itemInHand != null){
+            IThrowable throwableItem = itemInHand.GetComponent<IThrowable>();
+            
+            if (throwableItem != null){
+                itemInHand.transform.SetParent(null);
+
+                PlayerScript player = GetComponentInParent<PlayerScript>();
+                throwableItem.Throw(player.facingRight);
+                
+                isHoldingItem = false;
+                itemInHand = null;
+            }            
         }
         else if (UserInput.instance.controls.Hotbar.ScrollRight.WasPressedThisFrame()){
             ScrollRight();
@@ -42,7 +72,16 @@ public class HotBarScript : MonoBehaviour
             ScrollLeft();
         }
         else if (UserInput.instance.controls.Hotbar.Drop.WasPressedThisFrame()){
-            DropItem(currentSlot);
+            if (itemInHand != null){
+                IThrowable DroppableItem = itemInHand.GetComponent<IThrowable>();
+
+                itemInHand.transform.SetParent(null);
+                DroppableItem.Drop();
+                isHoldingItem = false;
+                itemInHand = null;
+            }
+            //DropItem(currentSlot);
+            //hotbarSlots[currentSlot] = null;
         }
 
     }
@@ -111,7 +150,7 @@ public class HotBarScript : MonoBehaviour
         // LINQ to get closest collider to player
         var closestCollider = hitColliders
             .Where(hitCollider => hitCollider.CompareTag("Pickup"))
-            .Select(hitCollider => new { Collider = hitCollider, Item = hitCollider.GetComponent<Item>() })
+            .Select(hitCollider => new { Collider = hitCollider, Item = hitCollider.GetComponent<GameObject>() })
             .OrderBy(hit => Vector2.Distance(transform.position, hit.Collider.transform.position))
             .Select(hit => hit.Collider)
             .FirstOrDefault();
@@ -121,10 +160,12 @@ public class HotBarScript : MonoBehaviour
         if (closestCollider != null)
         {
             Item item = closestCollider.GetComponent<Item>();
+            GameObject itemGO = closestCollider.gameObject;
             if (item != null) {
                 int slot = NextHotbarSlotIndex();
-                AddToHotbar(item, slot);
-                //PickUpItem(item.GetComponent<GameObject>());        
+                //AddToHotbar(item, slot);
+                PickUpItem(itemGO);
+                isHoldingItem = true;        
             }
         }
     }
@@ -133,7 +174,18 @@ public class HotBarScript : MonoBehaviour
     {
         item.transform.SetParent(playerHand);
         item.transform.localPosition = Vector3.zero; // Adjust as needed
-        item.SetActive(false); // Deactivate the item
+        item.transform.localRotation = Quaternion.identity; // Reset rotation
+        //item.SetActive(false); // Deactivate the item
+        
+        Rigidbody2D rb = item.GetComponent<Rigidbody2D>();
+        if (rb != null){
+            rb.velocity = Vector2.zero;
+            rb.angularVelocity = 0;
+            rb.isKinematic = true; // Make sure the item doesn't react to physics
+            Debug.Log("Is Kinematic: " + rb.isKinematic);
+        }
+
+        itemInHand = rb.gameObject;
     }
 
 
@@ -175,7 +227,8 @@ public class HotBarScript : MonoBehaviour
             hotbarSlots[slotIndex] = item;
         }
 
-        item.transform.parent.gameObject.SetActive(false);
+        Debug.Log(item);
+        //item.transform.gameObject.SetActive(false);
 
         RefreshUI();
     }
@@ -186,6 +239,8 @@ public class HotBarScript : MonoBehaviour
     }
 
     private void DropItem(int slotIndex){
+        
+
         if (hotbarSlots[slotIndex] != null){
             hotbarSlots[slotIndex].transform.parent.gameObject.SetActive(true);
             hotbarSlots[slotIndex] = null;

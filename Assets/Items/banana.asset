@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: banana
   m_EditorClassIdentifier: 
   itemType: 0
-  sprite: {fileID: -5786164333596270976, guid: b1f24b3bc2e2f1d4b858657ad5c115a0, type: 3}
+  sprite: {fileID: -5728686177044832811, guid: b1f24b3bc2e2f1d4b858657ad5c115a0, type: 3}

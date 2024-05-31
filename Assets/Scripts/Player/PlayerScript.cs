@@ -29,7 +29,7 @@ public class PlayerScript : AnimatorManager
     [SerializeField] private float groundedLinearDrag = 5.35f;
     [Tooltip("This value determines how quickly the player is able to turn around in the air. This value does affect how gravity will feel. Will need to tweak gravity settings as this value is tweaked. I recommend keeping it relatively close to 0")]
     [SerializeField] private float aerialLinearDrag = 2f;
-    private bool facingRight = true;
+    public bool facingRight = true;
     [HideInInspector] public float xMoveInput;
     public float prevXMoveInput;             // used when checking for dust animation from stopped position
     [HideInInspector] public float yMoveInput;

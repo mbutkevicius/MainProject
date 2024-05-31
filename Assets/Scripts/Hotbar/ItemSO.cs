@@ -8,7 +8,7 @@ public class ItemSO : ScriptableObject
 {
     [Header("Properties")]
     public ItemType itemType;
-    public Sprite sprite;
+    public int damage = 0;
 
     public enum ItemType {
         apple,
