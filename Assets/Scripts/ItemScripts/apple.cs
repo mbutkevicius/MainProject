@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class apple : MonoBehaviour, IThrowable
+public class apple : Item
 {
-    public ItemSO itemData;
+    //public ItemSO itemData;
     public Sprite sprite;
     // Start is called before the first frame update
     void Start()
@@ -19,7 +19,11 @@ public class apple : MonoBehaviour, IThrowable
 
     }
 
-    public void Throw(bool facingRight)
+    /*
+    Throw and Drop are included in specific item scripts rather than hotbar script
+    in case items have distinct properties 
+    */
+    public override void Throw(bool facingRight)
     {
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         // throw right if facing right
@@ -31,7 +35,7 @@ public class apple : MonoBehaviour, IThrowable
         }
     }
 
-    public void Drop(){
+    public override void Drop(){
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         {
             rb.isKinematic = false;

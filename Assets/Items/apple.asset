@@ -12,5 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96a55165ff4eeb849a25f52ba8198e2c, type: 3}
   m_Name: apple
   m_EditorClassIdentifier: 
-  itemType: 0
-  sprite: {fileID: 7293598183456022363, guid: 1ddc9afd21fec77489b1248d18f31b68, type: 3}
+  damage: -1

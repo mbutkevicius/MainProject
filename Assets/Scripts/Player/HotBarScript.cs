@@ -7,6 +7,12 @@ using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+Hotbar Logic. Allows items to work with hotbar and various methods for the hotbar
+including features such as UIRefresh, scrolling, and other features critical to
+its function.
+*/
+
 public class HotBarScript : MonoBehaviour
 {
     public Transform playerHand;
@@ -56,13 +62,13 @@ public class HotBarScript : MonoBehaviour
             }
         }
         else if (UserInput.instance.controls.Hotbar.Throw.WasPressedThisFrame() && itemInHand != null){
-            IThrowable throwableItem = itemInHand.GetComponent<IThrowable>();
+            //IThrowable throwableItem = itemInHand.GetComponent<IThrowable>();
             
-            if (throwableItem != null){
+            if (itemInHand != null){
                 itemInHand.transform.SetParent(null);
 
                 PlayerScript player = GetComponentInParent<PlayerScript>();
-                throwableItem.Throw(player.facingRight);
+                itemInHand.GetComponent<Item>().Throw(player.facingRight);
                 
                 isHoldingItem = false;
                 itemInHand = null;
@@ -76,10 +82,10 @@ public class HotBarScript : MonoBehaviour
         }
         else if (UserInput.instance.controls.Hotbar.Drop.WasPressedThisFrame()){
             if (itemInHand != null){
-                IThrowable DroppableItem = itemInHand.GetComponent<IThrowable>();
+                //IThrowable DroppableItem = itemInHand.GetComponent<IThrowable>();
 
                 itemInHand.transform.SetParent(null);
-                DroppableItem.Drop();
+                itemInHand.GetComponent<Item>().Drop();
                 isHoldingItem = false;
                 itemInHand = null;
             }

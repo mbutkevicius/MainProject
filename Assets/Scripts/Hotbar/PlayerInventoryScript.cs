@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using UnityEngine;
 
+// This script is unecessary. Was testing a different method 
+/*
 public class PlayerInventoryScript : MonoBehaviour
 {
     [Header("General")]
@@ -70,4 +72,4 @@ public class PlayerInventoryScript : MonoBehaviour
         Debug.Log(itemSetActive);
     }
     */
-}
+//}
